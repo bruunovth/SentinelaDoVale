@@ -1,0 +1,130 @@
+﻿@*@model Domain.Usuario*@
+@{
+    ViewBag.Title = "Atualizar";
+}
+
+
+
+<style>
+    /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+    #map {
+        width: 100%;
+        height: 450px;
+    }
+
+    .meuinput {
+        width: 120px;
+        height: 36px;
+    }
+</style>
+
+
+    <div class="col-lg-6 pull-left">
+        <div class="card">
+            <div class="card-header">
+                <strong>Conta</strong>
+            </div>
+            <form action="" method="post">
+                <div class="card-body card-block">
+                    <div class="form-group">
+                        <label for="company" class=" form-control-label">Username</label>
+                        <input type="text" disabled id="Username" name="Username" value="@Model.Username" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="vat" class=" form-control-label">Nome</label>
+                        <input type="text" name="Nome" disabled value="@Model.Nome" class="form-control">
+
+                    </div>
+                    <div class="form-group">
+                        <label for="street" class=" form-control-label">Data de Nascimento</label>
+                        <input type="text" name="DataNascimento" disabled value="@Model.DataNascimento.ToString("dd/MM/yyyy")" class="form-control datepicker">
+                    </div>
+                    <div class="form-group">
+                        <label for="vat" class=" form-control-label">Pontos</label>
+                        <input type="text" name="Pontos" disabled value="@Model.Pontos" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="vat" class=" form-control-label">Função</label>
+                        <input type="text" name="Funcao" disabled value="@Model.Funcao" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="street" class=" form-control-label">Email</label>
+                        <input type="text" name="Email" id="Email" value="@Model.Email" class="form-control">
+                        @Html.ValidationMessage("Email")
+                    </div>
+                    <div class="form-group">
+                        <label for="street" class=" form-control-label">Telefone</label>
+                        <input class="form-control phoneMask" type="text" name="Telefone" id="Telefone" value="@Model.Telefone">
+                        @Html.ValidationMessage("Telefone")
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fa fa-dot-circle-o"></i>Atualizar
+                        </button>
+                        <a role="button" class="btn btn-danger btn-sm" href="@Url.Action("AlterarSenha","Password")">
+                            <i class="fa fa-ban"></i>Alterar Senha
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+
+@if (ViewBag.Markers != "[];")
+{
+    <div class="card col-lg-6">
+        <div class="card-header">
+            <strong>Minhas Ocorrências</strong>
+        </div>
+        <div class="card-body card-block">
+            <div class="form-group">
+                <div id="dvMap" style="width: 100%; height: 631px">
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCC_FC_GMBKSepZusci_BgPRKz1vANdFXs&callback=initMap"></script>
+    <script type="text/javascript">
+
+        var markers = @Html.Raw(ViewBag.Markers);
+        window.onload = function () {
+            var mapOptions = {
+                center: new google.maps.LatLng(markers[0].lat, markers[0].lng),
+                zoom: 16,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var infoWindow = new google.maps.InfoWindow();
+            var map = new google.maps.Map(document.getElementById("dvMap"), mapOptions);
+            for (i = 0; i < markers.length; i++) {
+                var data = markers[i]
+                var myLatlng = new google.maps.LatLng(data.lat, data.lng);
+                var marker = new google.maps.Marker({
+                    position: myLatlng,
+                    map: map,
+                    title: data.title
+                });
+                (function (marker, data) {
+                    google.maps.event.addListener(marker, "click", function (e) {
+                        infoWindow.setContent(data.description);
+                        infoWindow.open(map, marker);
+                    });
+                })(marker, data);
+            }
+        }
+
+        $(document).ready(function () {
+            $('.phoneMask').mask('(00)90000-0000');
+            $('.date').mask('00/00/0000');
+        });
+
+    </script>
+
+}

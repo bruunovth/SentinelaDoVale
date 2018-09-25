@@ -1,0 +1,514 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="au theme template">
+    <meta name="author" content="Hau Nguyen">
+    <meta name="keywords" content="au theme template">
+
+    <!-- Title Page-->
+    <title>Sentinela do Vale</title>
+
+    <!-- Fontfaces CSS-->
+    <link href="~/css/font-face.css" rel="stylesheet" media="all">
+    <link href="~/vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
+    <link href="~/vendor/font-awesome-5/css/fontawesome-all.min.css" rel="stylesheet" media="all">
+    <link href="~/vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
+
+    <!-- Bootstrap CSS-->
+    <link href="~/vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet" media="all">
+
+    <!-- Vendor CSS-->
+    <link href="~/vendor/animsition/animsition.min.css" rel="stylesheet" media="all">
+    <link href="~/vendor/bootstrap-progressbar/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet" media="all">
+    <link href="~/vendor/wow/animate.css" rel="stylesheet" media="all">
+    <link href="~/vendor/css-hamburgers/hamburgers.min.css" rel="stylesheet" media="all">
+    <link href="~/vendor/slick/slick.css" rel="stylesheet" media="all">
+    <link href="~/vendor/select2/select2.min.css" rel="stylesheet" media="all">
+    <link href="~/vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" media="all">
+    <link href="~/vendor/vector-map/jqvmap.min.css" rel="stylesheet" media="all">
+
+    <!-- Main CSS-->
+    <link href="~/css/theme.css" rel="stylesheet" media="all">
+
+</head>
+
+<body class="animsition">
+    <div class="page-wrapper">
+        <!-- MENU SIDEBAR-->
+        <aside class="menu-sidebar2">
+            <div class="logo">
+                <a href="~/Home/Index">
+                    <img src="~/images/sentinela do vale.png" alt="Sentinela do Vale" />
+                </a>
+            </div>
+            @if (MvcPresentationLayer.Models.Cookie.Exists("SentinelaDoValeLogin"))
+            {
+                int IDUsuario = Convert.ToInt32(MvcPresentationLayer.Models.Cookie.Get("SentinelaDoValeLogin"));
+                Domain.Usuario usuarioConectado = new BusinessLogicalLayer.UsuarioBLL().GetByID(IDUsuario);
+
+                <div class="menu-sidebar2__content js-scrollbar1">
+                    <div class="account2">
+                        <div class="image img-cir img-120">
+                            <img src="~/images/usuario logado (1).jpg" alt="" />
+                        </div>
+                        <h4 class="name">@usuarioConectado.Nome</h4>
+                        <a href="@Url.Action("Logout","Logout")">Sair</a>
+                    </div>
+                    <nav class="navbar-sidebar2">
+                        <ul class="list-unstyled navbar__list">
+                            <li class="active has-sub">
+                                <a class="js-arrow" href="#">
+                                    <i class="fas fa-map-marker-alt"></i>Ocorrencias
+                                    <span class="arrow">
+                                        <i class="fas fa-angle-down"></i>
+                                    </span>
+                                </a>
+                                <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                    <li>
+                                        <a href="~/Ocorrencia/Cadastrar">Nova Ocorrência</a>
+                                    </li>
+                                    <li>
+                                        <a href="~/TodasOcorrencias/Index">Todas Ocorrências</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="active has-sub">
+                                <a class="js-arrow" href="#">
+                                    <i class="fas fa-map-marker-alt"></i>Dúvidas
+                                    <span class="arrow">
+                                        <i class="fas fa-angle-down"></i>
+                                    </span>
+                                </a>
+                                <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                    <li>
+                                        <a href="#" onclick="abrirModalParaQueServe()">Para que serve?</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" onclick="abrirModalComoFunciona()">Como funciona?</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" onclick="abrirModalComoVirarModerador()">Como pontuar?</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" onclick="abrirModalOcorrencia()">Ocorrência já cadastrada?</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="~/Sac/Index">
+                                    <i class="fas fa-comment-alt"></i>SAC
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>                
+            }
+            else
+            {
+                <div class="menu-sidebar2__content js-scrollbar1">
+                    <div class="account2">
+                        <div class="image img-cir img-120">
+                            <img src="~/images/usuario desconectado (1).png" alt="" />
+                        </div>
+                        <h4 class="name">Usuario</h4>
+                        <a href="@Url.Action("Logar","Login")">Entrar</a>
+                    </div>
+                    <nav class="navbar-sidebar2">
+                        <ul class="list-unstyled navbar__list">
+                            <li class="active has-sub">
+                                <a class="js-arrow" href="#">
+                                    <i class="fas fa-map-marker-alt"></i>Ocorrências
+                                    <span class="arrow">
+                                        <i class="fas fa-angle-down"></i>
+                                    </span>
+                                </a>
+                                <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                    <li>
+                                        <a href="~/Ocorrencia/Cadastrar">Nova Ocorrência</a>
+                                    </li>
+                                    <li>
+                                        <a href="~/TodasOcorrencias/Index">Todas Ocorrências</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="active has-sub">
+                                <a class="js-arrow" href="#">
+                                    <i class="fas fa-map-marker-alt"></i>Dúvidas
+                                    <span class="arrow">
+                                        <i class="fas fa-angle-down"></i>
+                                    </span>
+                                </a>
+                                <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                    <li>
+                                        <a href="#" id="modalServe">Para que serve?</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" id="modalComoFunciona">Como funciona?</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" id="modalComoPontuar">Como pontuar?</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" id="modalOcorrencia">Ocorrência já cadastrada?</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="~/Sac/Index">
+                                    <i class="fas fa-comment-alt"></i>SAC
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            }
+        </aside>
+        <!-- END MENU SIDEBAR-->
+        <!-- PAGE CONTAINER-->
+        <div class="page-container2">
+            <!-- HEADER DESKTOP-->
+            <header class="header-desktop2">
+                <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                        <div class="header-wrap2">
+                            <div class="logo d-block d-lg-none">
+                                <a href="~/Home/Index">
+                                    <img src="~/images/sentinela do vale.png" alt="CoolAdmin" />
+                                </a>
+                            </div>
+                            <div class="header-button2">
+                                <div class="header-button-item js-item-menu">
+                                    <!--BOTÃO PESQUISAR-->
+                                    @*<i class="zmdi zmdi-search"></i>
+                                        <div class="search-dropdown js-dropdown">
+                                            <form action="">
+                                                <input class="au-input au-input--full au-input--h65" type="text" placeholder="search for datas &amp; reports..." />
+                                                <span class="search-dropdown__icon">
+                                                    <i class="zmdi zmdi-search"></i>
+                                                </span>
+                                            </form>
+                                        </div>*@
+                                </div>
+
+                                <div class="header-button-item mr-0 js-sidebar-btn">
+                                    <i class="zmdi zmdi-menu"></i>
+                                </div>
+                                <div class="setting-menu js-right-sidebar d-none d-lg-block">
+                                    <div class="account-dropdown__body">
+                                        @if (MvcPresentationLayer.Models.Cookie.Exists("SentinelaDoValeLogin"))
+                                        {
+                                            <div class="account-dropdown__item">
+                                                <a href="~/Account/Atualizar">
+                                                    <i class="zmdi zmdi-account"></i>Minha Conta
+                                                </a>
+                                            </div>
+                                            <div class="account-dropdown__item">
+                                                <a href="~/MinhasOcorrencias/Index">
+                                                    <i class="zmdi zmdi-pin"></i>Minhas Ocorrências
+                                                </a>
+                                            </div>
+                                            <div class="account-dropdown__item">
+                                                <a href="~/Ocorrencia/Cadastrar">
+                                                    <i class="zmdi zmdi-pin"></i>Nova Ocorrência
+                                                </a>
+                                            </div>                                            
+                                        }
+                                        else
+                                        {
+                                            <div class="account-dropdown__item">
+                                                <a href="~/Register/Cadastrar">
+                                                    <i class="fas fa-user"></i>Cadastrar-se
+                                                </a>
+                                            </div>
+                                            <div class="account-dropdown__item">
+                                                <a href="~/Ocorrencia/Cadastrar">
+                                                    <i class="fas fa-map-marker-alt"></i>Nova Ocorrência
+                                                </a>
+                                            </div>
+                                            <div class="account-dropdown__item">
+                                                <a href="~/TodasOcorrencias/Index">
+                                                    <i class="fas fa-map-marker-alt"></i>Todas Ocorrências
+                                                </a>
+                                            </div>
+                                            <div class="account-dropdown__item">
+                                                <a href="~/Sac/Index">
+                                                    <i class="fas fa-comment-alt"></i>SAC
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+
+            <!--MENU CELULAR-->
+
+            <aside class="menu-sidebar2 js-right-sidebar d-block d-lg-none">
+                <div class="logo">
+                    <a href="#">
+                        <img src="" alt="Sentinela do Vale" />
+                    </a>
+                </div>
+                <div class="menu-sidebar2__content js-scrollbar2">
+                    @if (MvcPresentationLayer.Models.Cookie.Exists("SentinelaDoValeLogin"))
+                    {
+                        int IDUsuario = Convert.ToInt32(MvcPresentationLayer.Models.Cookie.Get("SentinelaDoValeLogin"));
+                        Domain.Usuario usuarioConectado = new BusinessLogicalLayer.UsuarioBLL().GetByID(IDUsuario);
+                        <div class="account2">
+                            <div class="image img-cir img-120">
+                                <img src="~/images/usuario logado (1).jpg" alt="" />
+                            </div>
+                            <h4 class="name">@usuarioConectado.Nome</h4>
+                            <a href="@Url.Action("Logout", "Logout")">Sair</a>
+                        </div>
+                        <nav class="navbar-sidebar2">
+                            <ul class="list-unstyled navbar__list">
+                                <li>
+                                    <a href="~/Account/Atualizar">
+                                        <i class="fas fa-user"></i>Minha Conta
+                                    </a>
+                                </li>
+                                <li class="active has-sub">
+                                    <a class="js-arrow" href="#">
+                                        <i class="fas fa-map-marker-alt"></i>Ocorrências
+                                        <span class="arrow">
+                                            <i class="fas fa-angle-down"></i>
+                                        </span>
+                                    </a>
+                                    <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                        <li>
+                                            <a href="~/Ocorrencia/Cadastrar">Nova Ocorrência</a>
+                                        </li>
+                                        <li>
+                                            <a href="~/MinhasOcorrencias/Index">Minhas Ocorrências</a>
+                                        </li>
+                                        <li>
+                                            <a href="~/TodasOcorrencias/Index">Todas Ocorrências</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="active has-sub">
+                                    <a class="js-arrow" href="#">
+                                        <i class="fas fa-map-marker-alt"></i>Dúvidas
+                                        <span class="arrow">
+                                            <i class="fas fa-angle-down"></i>
+                                        </span>
+                                    </a>
+                                    <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                        <li>
+                                            <a href="#" id="modalServe">Para que serve?</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" id="modalComoFunciona">Como funciona?</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" id="modalComoPontuar">Como pontuar?</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" id="modalOcorrencia">Ocorrência já cadastrada?</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="~/Sac/Index">
+                                        <i class="fas fa-comment-alt"></i>SAC
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    }
+                    else
+                    {
+                        <div class="account2">
+                            <div class="image img-cir img-120">
+                                <img src="~/images/usuario desconectado (1).png" alt="" />
+                            </div>
+                            <h4 class="name">Usuario</h4>
+                            <a href="@Url.Action("Logar", "Login")">Entrar</a>
+                        </div>
+                        <nav class="navbar-sidebar2">
+                            <ul class="list-unstyled navbar__list">
+                                <li>
+                                    <a href="~/Register/Cadastrar">
+                                        <i class="fas fa-user"></i>Cadastrar-se
+                                    </a>
+                                </li>
+                                <li class="active has-sub">
+                                    <a class="js-arrow" href="#">
+                                        <i class="fas fa-map-marker-alt"></i>Ocorrências
+                                        <span class="arrow">
+                                            <i class="fas fa-angle-down"></i>
+                                        </span>
+                                    </a>
+                                    <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                        <li>
+                                            <a href="~/Ocorrencia/Cadastrar">Nova Ocorrência</a>
+                                        </li>
+                                        <li>
+                                            <a href="~/TodasOcorrencias/Index">Todas Ocorrências</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="active has-sub">
+                                    <a class="js-arrow" href="#">
+                                        <i class="fas fa-map-marker-alt"></i>Dúvidas
+                                        <span class="arrow">
+                                            <i class="fas fa-angle-down"></i>
+                                        </span>
+                                    </a>
+                                    <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                        <li>
+                                            <a href="#" id="modalServe">Para que serve?</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" id="modalComoFunciona">Como funciona?</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" id="modalComoPontuar">Como pontuar?</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" id="modalOcorrencia">Ocorrência já cadastrada?</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="~/Sac/Index">
+                                        <i class="fas fa-comment-alt"></i>SAC
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    }
+                </div>
+            </aside>
+            <!-- END HEADER DESKTOP-->
+            <section>
+                <div class="main-content">
+                    <div class="section__content section__content--p30">
+                        <div class="container-fluid">
+                            @RenderBody()
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div style="margin-left:auto; margin-top:70px; display:none;" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModalParaQueServe" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h4 id="myModalLabel" class="modal-title">Para que serve?</h4>
+                        <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea rows="6" cols="50" disabled id="descricao" class="form-control">
+- O projeto serve para a população cadastrar problemas em sua comunidade para que os órgãos competentes fiquem cientes o mais rápido possível para solucionar as demandas.</textarea>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <div style="margin-left:auto; margin-top:70px; display:none;" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModalComoFunciona" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h4 id="myModalLabel" class="modal-title">Como funciona?</h4>
+                        <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea rows="15" cols="50" disabled id="descricao" class="form-control">
+- Para usuário ter acesso ao conteúdo completo do sistema, deve se cadastrar no site Sentinela do Vale. 
+- Caso contrário terá acesso somente a um conteúdo limitado. Com o cadastro efetuado o usuário poderá cadastrar ocorrências com auxílio do Google Maps no local desejado, selecionando a categoria do problema (ambiental, elétrico, estrutural, saneamento/lixo, trânsito ou transporte público) e fazendo uma breve descrição (não são aceitas palavras obscenas). 
+- Após ser cadastrada a ocorrência recebe o status de “Aberta”, podendo ser alterada para “Resolvida” a qualquer momento pelo usuário responsável ou pelo moderador. 
+- Um e-mail automático será enviado para o SAC responsável avisando da nova ocorrência para que o problema possa ser resolvido com a maior agilidade possível. Na página home, todos os internautas podem visualizar um mapa com todas as ocorrências com o status de “Aberto” além das principais (mais vezes cadastradas) e mais recentes.
+                        </textarea>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <div style="margin-left:auto; margin-top:70px; display:none;" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModalComoVirarModerador" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h4 id="myModalLabel" class="modal-title">Como virar moderador?</h4>
+                        <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea rows="10" cols="50" disabled id="descricao" class="form-control">
+- Nosso sistema contém um sistema de “pontos” que a cada nova pontuação atingida mudará a “classificação” do usuário. 
+- O usuário começa como Unranked, entre 50 e 150 pontos o usuário é classificado como Bronze, entre 150 e 300 Prata, entre 300 e 1000 Ouro, e acima de 1000 o usuário recebe o título de Moderador, uma classificação especial que concede ao usuário a função de alterar o status das ocorrências. 
+- Você pode verificar a sua pontuação clicando em “Minha Conta”.
+                        </textarea>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <div style="margin-left:auto; margin-top:70px; display:none;" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModalOcorrencia" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h4 id="myModalLabel" class="modal-title">E se a ocorrência já foi cadastrada?</h4>
+                        <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea rows="10" cols="50" disabled id="descricao" class="form-control">- Nosso sistema é programado para quando o usuário clicar no botão “Cadastrar” buscar todas as ocorrências com descrição e categorias semelhantes em um raio de 1000 metros, assim, se o usuário que estiver cadastrando verificar que as ocorrências coincidem, poderá selecionar o “É esta!” para o sistema tornar a ocorrência mais relevante. Caso contrário, poderá selecionar o "Não é esta!" para que seja cadastrada normalmente a ocorrência em questão.
+                        </textarea>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <!-- Jquery JS-->
+    <script src="~/vendor/jquery-3.2.1.min.js"></script>
+    <script src="~/js/jquery.mask.js"></script>
+    <script src="~/js/jquery.mask.min.js"></script>
+
+    <!-- Bootstrap JS-->
+    <script src="~/vendor/bootstrap-4.1/popper.min.js"></script>
+    <script src="~/vendor/bootstrap-4.1/bootstrap.min.js"></script>
+    <!-- Vendor JS       -->
+    <script src="~/vendor/slick/slick.min.js">
+    </script>
+    <script src="~/vendor/wow/wow.min.js"></script>
+    <script src="~/vendor/animsition/animsition.min.js"></script>
+    <script src="~/vendor/bootstrap-progressbar/bootstrap-progressbar.min.js">
+    </script>
+    <script src="~/vendor/counter-up/jquery.waypoints.min.js"></script>
+    <script src="~/vendor/counter-up/jquery.counterup.min.js">
+    </script>
+    <script src="~/vendor/circle-progress/circle-progress.min.js"></script>
+    <script src="~/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="~/vendor/chartjs/Chart.bundle.min.js"></script>
+    <script src="~/vendor/select2/select2.min.js">
+    </script>
+    <script src="~/vendor/vector-map/jquery.vmap.js"></script>
+    <script src="~/vendor/vector-map/jquery.vmap.min.js"></script>
+    <script src="~/vendor/vector-map/jquery.vmap.sampledata.js"></script>
+    <script src="~/vendor/vector-map/jquery.vmap.world.js"></script>
+    <script src="~/js/modaljs.js"></script>
+
+    <!-- Main JS-->
+    <script src="~/js/main.js"></script>
+
+   
+
+</body>
+@RenderSection("scripts", required: false)
+</html>
+<!-- end document-->

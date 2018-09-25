@@ -1,0 +1,89 @@
+﻿@model IEnumerable<Domain.Ocorrencia>
+
+<table class="table table-borderless table-data3">
+    <thead style="background:#365cad;">
+        <tr>
+            <th>Data</th>
+            <th>Endereço</th>
+            <th>Categoria</th>
+            <th>Descrição</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    @if (MvcPresentationLayer.Models.Cookie.Exists("SentinelaDoValeLogin"))
+    {
+        BusinessLogicalLayer.CategoriaBLL categoriaBLL = new BusinessLogicalLayer.CategoriaBLL();
+        BusinessLogicalLayer.UsuarioBLL usuarioBLL = new BusinessLogicalLayer.UsuarioBLL();
+        int IDUsuario = Convert.ToInt32(MvcPresentationLayer.Models.Cookie.Get("SentinelaDoValeLogin"));
+        foreach (Domain.Ocorrencia oc in Model)
+        {
+            Domain.Usuario usuarioConectado = usuarioBLL.GetByID(IDUsuario);
+            if ((usuarioConectado.ID == oc.IDUsuario || usuarioConectado.Funcao == Domain.Enums.Cargo.Moderador) && oc.Status != Domain.Enums.Situacao.Resolvido)
+            {
+                Domain.Categoria categoria = categoriaBLL.GetByID(oc);
+                <tbody>
+                    <tr>
+                        <td style="display: none;">@oc.ID</td>
+                        <td>@oc.DataCadastro.ToString()</td>
+                        <td>@oc.Endereco</td>
+                        <td>@categoria.Nome</td>
+                        <td>@oc.Descricao </td>
+                        <td>
+                            <button onclick="abrirModal(this)" class="btn btn-danger meuinput">@oc.Status</button>
+                        </td>
+                    </tr>
+                </tbody>
+            }
+            else
+            {
+                Domain.Categoria categoria = categoriaBLL.GetByID(oc);
+                <tbody>
+                    <tr>
+                        <td style="display: none;">@oc.ID</td>
+                        <td>@oc.DataCadastro.ToString()</td>
+                        <td>@oc.Endereco</td>
+                        <td>@categoria.Nome</td>
+                        <td>@oc.Descricao </td>
+                        <td>
+                            @if (@oc.Status == Domain.Enums.Situacao.Resolvido)
+                            {
+                                <button disabled class="btn btn-success meuinput">@oc.Status</button>
+                            }
+                            else
+                            {
+                                <button disabled class="btn btn-danger meuinput">@oc.Status</button>
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            }
+        }
+    }
+    else
+    {
+        BusinessLogicalLayer.CategoriaBLL categoriaBLL = new BusinessLogicalLayer.CategoriaBLL();
+        foreach (Domain.Ocorrencia oc in Model)
+        {
+            Domain.Categoria categoria = categoriaBLL.GetByID(oc);
+            <tbody>
+                <tr>
+                    <td style="display: none;">@oc.ID</td>
+                    <td>@oc.DataCadastro.ToString()</td>
+                    <td>@oc.Endereco</td>
+                    <td>@categoria.Nome</td>
+                    <td>@oc.Descricao </td>
+                    <td>
+                        @if (@oc.Status == Domain.Enums.Situacao.Resolvido)
+                        {
+                            <button disabled class="btn btn-success meuinput">@oc.Status</button>
+                        }
+                        else
+                        {
+                            <button disabled class="btn btn-danger meuinput">@oc.Status</button>
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        }
+    }
+</table>

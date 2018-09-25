@@ -1,0 +1,40 @@
+﻿@model Domain.Sac
+@{
+    ViewBag.Title = "Home Page";
+}
+
+
+<div class="row m-t-30">
+    <div class="col-md-12">
+        <!-- DATA TABLE-->
+        <div class="table-responsive m-b-40">
+            <table class="table table-borderless table-data3">
+                <thead style="background:#365cad;">
+                    <tr>
+                        <th>Categoria</th>
+                        <th>Endereço</th>
+                        <th>Telefone</th>
+                        <th>Email</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                @foreach (Domain.Sac sac in new BusinessLogicalLayer.SacBLL().LerTodos())
+                {
+
+                    BusinessLogicalLayer.CategoriaBLL categoriaBLL = new BusinessLogicalLayer.CategoriaBLL();
+                    Domain.Categoria categoria = categoriaBLL.GetByID(sac);
+                    <tbody>
+                        <tr>
+                            <td>@categoria.Nome</td>
+                            <td>@sac.Endereco</td>
+                            <td>@sac.Telefone </td>
+                            <td>@sac.Email</td>
+                            <td>@sac.Descricao</td>
+                        </tr>
+                    </tbody>
+                }
+            </table>
+        </div>
+        <!-- END DATA TABLE-->
+    </div>
+</div>

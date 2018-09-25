@@ -1,0 +1,135 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<div class="form-control" style="display:inline-block; background:#f2f2f2; border:none;">
+
+    <div class="col-4 " style="display:inline-block">
+        <label for="street" class=" form-control-label">Categoria</label>
+        <select name="idcategoria" id="IDCategoriaFiltro" class="form-control custom-select">
+            @foreach (Domain.Categoria c in new BusinessLogicalLayer.CategoriaBLL().LerTodos())
+            {
+                <option value="@c.ID">@c.Nome</option>
+            }
+            <option value="7">Todas Ocorrências</option>
+        </select>
+    </div>
+
+    <div class="col-4 " style="display:inline-block">
+        <label for="street" class=" form-control-label">Status</label>
+        <select name="StatusFiltro" id="StatusFiltro" class="form-control custom-select">
+            <option value="0">Aberto</option>
+            <option value="1">Resolvida</option>
+            <option value="todasOcFiltro">Aberto/Resolvida</option>
+        </select>
+    </div>
+    <button onclick="retornarFiltro()" class="btn btn-secondary" style="display:inline-block">Pesquisar</button>
+</div>
+
+
+<div class="row m-t-30">
+
+    <div class="col-md-12">
+        <!-- DATA TABLE-->
+
+        <div class="table-responsive m-b-40" id="TabelaSemFiltro">
+            @Html.Partial("_LerOcorrencias", new BusinessLogicalLayer.OcorrenciaBLL().LerTodos())
+        </div>
+
+
+        <!-- END DATA TABLE-->
+    </div>
+</div>
+
+<div style="margin-left:auto; margin-top:70px; display:none;" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
+    <form action="" method="post">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 id="myModalLabel" class="modal-title">Ocorrência</h4>
+                    <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+                </div>
+                <div class="modal-body">
+                    <label for="street" class=" form-control-label">Status</label>
+                    <div class="form-group">
+                        <select name="Status" id="Status" class="form-control">
+                            <option value="0">Aberto</option>
+                            <option value="1">Resolvido</option>
+                        </select>
+                        <label style="color: red;"></label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button onclick="chamarServidor()" class="au-btn au-btn--block au-btn--green m-b-20" type="submit">Alterar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- /.modal-content -->
+@section scripts{
+    <script>
+        var idSelecionado;
+
+        function abrirModal(btn) {
+            x = $(btn).parent().parent();
+
+            idSelecionado = ($(x).find('td').eq(0).text());
+
+
+            $("#myModal").modal('show');
+        }
+
+
+        //chamar o servidor e passar as informaçoes coletadas.
+        function chamarServidor() {
+            var status = $("#Status").val();
+            var novaDescricao = $("#novaDescricao").val();
+            $.ajax({
+                url: "Atualizar",
+                type: 'POST',
+                data: JSON.stringify({ ID: idSelecionado, Status: status, Descricao: novaDescricao }),
+                contentType: "application/json;charset=utf-8",
+                success: function (data) {
+                    if (data.Success) {
+                        //This is for the example. Please do something prettier for the user, :)
+                        alert('Status Atualizado com sucesso!');
+                    }
+                    else {
+                        alert(data.ErrorMessage);
+                    }
+                },
+                error: function (request, status, error) {
+                    alert('oh, errors here. The call to the server is not working.')
+                }
+            });
+        }
+
+        function retornarFiltro() {
+            var status;
+            var IDCategoriaFiltro = $("#IDCategoriaFiltro").val();
+            var idSelecionado;
+            if ($("#StatusFiltro").val() == "todasOcFiltro") {
+                idSelecionado = 1;
+            }
+            else {
+                status = $("#StatusFiltro").val();
+            }
+            $.ajax({
+                url: "LerOcorrencias",
+                type: 'POST',
+                data: JSON.stringify({ Status: status, IDCategoria: IDCategoriaFiltro, ID: idSelecionado }),
+                contentType: "application/json;charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $("#TabelaSemFiltro").html(response);
+                    //$("#TabelaSemFiltro").hide();
+                    //$("#TabelaSemFiltro").show();
+                    //This is for the example. Please do something prettier for the user, :)
+                },
+                error: function (request, status, error) {
+                    alert('oh, errors here. The call to the server is not working.')
+                }
+            });
+        }
+    </script>
+}

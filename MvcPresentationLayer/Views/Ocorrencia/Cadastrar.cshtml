@@ -1,0 +1,287 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<style>
+    /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+    #map {
+        width: 100%;
+        height: 450px;
+    }
+
+    .meuinput {
+        width: 120px;
+        height: 36px;
+    }
+</style>
+
+<div class="col-lg-6 pull-left">
+    <div class="card">
+        <div class="card-header">
+            <strong>Ocorrência</strong>
+        </div>
+        <div class="card-body card-block">
+            <div class="row form-group">
+                <div class="col-8">
+                    <div class="form-group">
+                        <label for="city" class=" form-control-label">Categoria</label>
+                        <select name="IDCategoria" id="IDCategoria" class="form-control">
+                            @foreach (Domain.Categoria c in new BusinessLogicalLayer.CategoriaBLL().LerTodos())
+                            {
+                                <option value="@c.ID">@c.Nome</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="street" class=" form-control-label">Descrição</label>
+                <textarea rows="4" cols="50" id="descricao" name="descricao" placeholder="Digite a descrição da ocorrência" class="form-control"></textarea>
+                <label id="erroPalavrao" style="color: red; display:none;"></label>
+            </div>
+
+            @if (TempData["Erro"] != null)
+            {
+                <div class="form-group">
+                    <label class=" form-control-label">@TempData["Erro"]</label>
+                </div>
+            }
+
+            <div class="form-group">
+                <button onclick="chamarServidor()" class="btn btn-danger meuinput">Cadastrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card col-lg-6">
+    <div class="card-header">
+        <strong>Local</strong>
+    </div>
+    <div class="card-body card-block">
+        <div class="form-group">
+            <div id="map" style="width: 100%; height: 550px">
+            </div>
+            <input type="text" id="address" placeholder="Blumenau, SC" class="form-control" style="margin-top:10px;">
+            <button id="submit" class="btn btn-danger meuinput pull-right" type="button" style="margin-top:10px;">Pesquisar</button>
+
+        </div>
+    </div>
+</div>
+
+<div style="margin-left:auto; margin-top:70px; display:none;" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="myModalLabel" class="modal-title">Ocorrência parecida encontrada!</h4>
+                <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+            </div>
+            <div class="modal-header">
+                <h5 id="myModalLabel" class="modal-title">Tem certeza que não é essa?</h5>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Endereço</label>
+                    <input disabled class="au-input au-input--full" id="enderecoOcorrencia" type="text">
+                </div>
+                <div class="form-group">
+                    <label>Distância</label>
+                    <input disabled class="au-input au-input--full" id="menorDistOcorrencia" type="text">
+                </div>
+                <div class="form-group">
+                    <label for="street" class=" form-control-label">Descrição</label>
+                    <textarea rows="4" cols="50" disabled id="descricaoOcorrencia" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <input class="au-input au-input--full" disabled id="categoriaOcorrencia" type="text">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="cadastrarNaoEncontrada()" data-dismiss="modal" class="btn btn-default">Não é esta!</button>
+                <button class="btn btn-primary" data-dismiss="modal" onclick="atualizarCadastros()">É esta!</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+@*<div class="row">
+    <div style="margin-bottom:10px; display: block; margin-top:1px;" id="map"></div>
+    <input type="text" id="address" placeholder="Blumenau, SC" class="form-control">
+</div>*@
+
+@section scripts{
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCC_FC_GMBKSepZusci_BgPRKz1vANdFXs&callback=initMap"
+            async defer></script>
+    <script>
+    var dadosAEnviar;
+    var markers = [];
+    var map;
+
+
+    function initMap() {
+        var myLatlng = { lat: -26.914177, lng: -49.068815 };
+
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 16,
+            center: myLatlng
+        });
+
+        // Adds a marker at the center of the map.
+        addMarker(myLatlng);
+        dadosAEnviar = myLatlng;
+
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                dadosAEnviar = pos;
+                addMarker(pos);
+                map.setCenter(pos);
+            });
+        } else {
+            map.setCenter(myLatlng);
+        }
+
+        // This event listener will call addMarker() when the map is clicked.
+        map.addListener('click', function (event) {
+            dadosAEnviar = event.latLng.toJSON();
+            addMarker(event.latLng);
+        });
+
+        var geocoder = new google.maps.Geocoder();
+
+        document.getElementById('submit').addEventListener('click', function () {
+            geocodeAddress(geocoder, map);
+        });
+    }
+
+    // Sets the map on all markers in the array.
+    function setMapOnAll(map) {
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(map);
+        }
+    }
+
+    // Deletes all markers in the array by removing references to them.
+    function deleteMarkers() {
+        setMapOnAll(null);
+        markers = [];
+    }
+
+    // Adds a marker to the map and push to the array.
+    function addMarker(location) {
+        deleteMarkers();
+        var marker = new google.maps.Marker({
+            position: location,
+            map: map
+        });
+        markers.push(marker);
+    }
+
+    function geocodeAddress(geocoder, resultsMap) {
+        var address = document.getElementById('address').value;
+        geocoder.geocode({ 'address': address }, function (results, status) {
+            if (status === 'OK') {
+                resultsMap.setCenter(results[0].geometry.location);
+                addMarker(results[0].geometry.location)
+                dadosAEnviar = results[0].geometry.location.toJSON();
+            } else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    }
+
+    function chamarServidor() {
+        var lat = dadosAEnviar.lat;
+        var Lng = dadosAEnviar.lng;
+        var descricao = $("#descricao").val();
+        var categoria = $("#IDCategoria").val();
+
+        $.ajax({
+            url: 'Cadastrar',
+            type: 'POST',
+            data: JSON.stringify({ lat: lat, lng: Lng, Descricao: descricao, IDCategoria: categoria }),
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                if (data.Success) {
+                    if (data.ID != 0) {
+                        jQuery("#myModal").modal('show');
+                        $("#descricaoOcorrencia").val(data.Descricao);
+                        $("#categoriaOcorrencia").val(data.CategoriaOcorrencia);
+                        $("#enderecoOcorrencia").val(data.Endereco);
+                        $("#menorDistOcorrencia").val(data.MenorDistancia);
+                    }
+                    else {
+                        alert('Ocorrência cadastrada com sucesso!');
+                    }
+                    //document.getElementById("erroPalavrao").style.display = 'none';
+                }
+                else {
+                    alert(data.ErrorMessage);
+                    //document.getElementById("erroPalavrao").style.display = 'block';
+                }
+            },
+            error: function (request, status, error) {
+                alert('oh, errors here. The call to the server is not working.')
+            }
+        });
+    }
+
+    function cadastrarNaoEncontrada() {
+        var lat = dadosAEnviar.lat;
+        var Lng = dadosAEnviar.lng;
+        var descricao = $("#descricao").val();
+        var categoria = $("#IDCategoria").val();
+
+        $.ajax({
+            url: 'CadastrarNaoEncontrada',
+            type: 'POST',
+            data: JSON.stringify({ lat: lat, lng: Lng, Descricao: descricao, IDCategoria: categoria }),
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                if (data.Success) {
+                    alert('Ocorrência cadastrada com sucesso!');
+                }
+                else {
+                    alert(data.ErrorMessage);
+                }
+            },
+            error: function (request, status, error) {
+                alert('oh, errors here. The call to the server is not working.')
+            }
+        });
+    }
+
+    function atualizarCadastros() {
+        var lat = dadosAEnviar.lat;
+        var Lng = dadosAEnviar.lng;
+        var descricao = $("#descricao").val();
+        var categoria = $("#IDCategoria").val();
+
+        $.ajax({
+            url: 'AtualizarCadastros',
+            type: 'POST',
+            data: JSON.stringify({ lat: lat, lng: Lng, Descricao: descricao, IDCategoria: categoria }),
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                if (data.Success) {
+                    alert('Obrigado pela contribuição!');
+                }
+                else {
+                    alert(data.ErrorMessage);
+                }
+            },
+            error: function (request, status, error) {
+                alert('oh, errors here. The call to the server is not working.')
+            }
+        });
+    }
+    </script>
+}
